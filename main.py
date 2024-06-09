@@ -33,6 +33,7 @@ class snake_head:
     
     def move(self):
         head_x, head_y = self.segment        # Získání souřadnic hlavy
+        self.old_segment = (head_x, head_y)  # Uložení staré pozice hlavy pro pohyb prvního segmentu
         
         if self.direction == "RIGHT":        # Jestliže směr je doprava  
             head_x += self.segment_size      # Pozice hlavy se posune o jeho velikost na x souřadnici do +, tedy doprava
@@ -87,23 +88,20 @@ clock = pygame.time.Clock()    # Hodiny
 # Cyklus pro zobrazování okna:
 running=True    
 while running:
-    for event in pygame.event.get():   # Pro každý zjištěný event
-        if event.type == pygame.QUIT:  # Jestliže uživatel klikl na křížek
-            running = False            # Ukončení cyklu
+    for event in pygame.event.get():            # Pro každý zjištěný event
+        if event.type == pygame.QUIT:           # Jestliže uživatel klikl na křížek
+            running = False                     # Ukončení cyklu
     
     #Pohyb hada:
-    keys = pygame.key.get_pressed()    # Vrátí seznam se všemi stisknutými klávesy
+    keys = pygame.key.get_pressed()             # Vrátí seznam se všemi stisknutými klávesy
     
-    head.change_direction(keys)        # Volání funkce pro změnu směru
-    head.move()                        # Volání funkce pro pohyb hlavy hada
-    head_x, head_y = head.segment      # Nastavení souřadnic hlavy
-    body.move(head_x, head_y)          # Volání funkce pro pohyb těla hada
+    head.change_direction(keys)                 # Volání funkce pro změnu směru
+    head.move()                                 # Volání funkce pro pohyb hlavy hada
+    old_head_x, old_head_y = head.old_segment   # Nastavení předešlých souřadnic hlavy
+    body.move(old_head_x, old_head_y)           # Volání funkce pro pohyb těla hada
 
     screen.fill(black)                 # Smazání starých pozic segmentů
     
-    pygame.draw.rect(screen, (green), (head.segment[0], head.segment[1], head.segment_size, head.segment_size))  # Vykreslení hlavy hada
-    pygame.draw.rect(screen, (red), (fruit.segment[0], fruit.segment[1], fruit.segment_size, fruit.segment_size)) # Vykreslení ovoce
-
 # Přidávání nových segment:    
     if head.segment == fruit.segment:
         if head.direction == "RIGHT":                                               # Jestliže směr hlavy je do prava
@@ -115,8 +113,12 @@ while running:
         elif head.direction == "DOWN":
             body.add_segment(head.segment[0], head.segment[1] + body.segment_size)
         
+        screen.fill(black)
         fruit = snake_fruit()           # Vytvoří novou pozici pro ovoce
-      
+ 
+    pygame.draw.rect(screen, (green), (head.segment[0], head.segment[1], head.segment_size, head.segment_size))   # Vykreslení hlavy hada
+    pygame.draw.rect(screen, (red), (fruit.segment[0], fruit.segment[1], fruit.segment_size, fruit.segment_size)) # Vykreslení ovoce
+         
 # Zobrazení segmentů:  
     for segment in body.segments:          
         pygame.draw.rect(screen, (green), (segment[0], segment[1], body.segment_size, body.segment_size))
