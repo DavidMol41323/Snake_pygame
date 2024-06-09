@@ -6,6 +6,7 @@ black=(0, 0, 0)
 green=(0, 255, 0)
 red=(255, 0, 0)
 
+
 pygame.init()  #Inicializace modulů pygame
 
 # Nastavení okna:
@@ -67,7 +68,7 @@ class snake_body:
             for i in range(len(self.segments) - 1, 0, -1):     # Postupné procházení seznamu pozpátku
                 if i > 0:                                     
                     self.segments[i] = self.segments[i - 1]   # Nastavení segmentu na pozici předešlého segmentu
-            print(self.segments)
+            #print(self.segments)                             # Pro testování 
             self.segments[0] = (head_x, head_y)               # Posun 1. segmentu na pozici, kde byla dříve hlava
 
 
@@ -119,13 +120,23 @@ while running:
     pygame.draw.rect(screen, (green), (head.segment[0], head.segment[1], head.segment_size, head.segment_size))   # Vykreslení hlavy hada
     pygame.draw.rect(screen, (red), (fruit.segment[0], fruit.segment[1], fruit.segment_size, fruit.segment_size)) # Vykreslení ovoce
          
-# Zobrazení segmentů:  
+# Zobrazení segmentů těla:  
     for segment in body.segments:          
         pygame.draw.rect(screen, (green), (segment[0], segment[1], body.segment_size, body.segment_size))
     
     
     pygame.display.update()   # Obnova okna
-    
+
+# Detekce kolize se stěnami:
+    if head.segment[0] > 780 or head.segment[1] > 780 or head.segment[0] < 20 or head.segment[1] < 20: # Jestliže se hlava dotkne stěny
+        print("kolize_stena")               # Pro testování
+
+# Detekce kolize s tělem hada
+    for segment in body.segments:           # Pro každdý segment těla
+        if head.segment == segment:         # Jestliže se hlava dotkne segmentu těla
+            print("kolize_telo")            # Pro testování
+         
+        
     clock.tick(7.5)           # Omezení na 7.5 snímku za sekundu
     
 pygame.quit()                 # Konec knihovny pygame
