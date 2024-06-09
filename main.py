@@ -6,6 +6,9 @@ black=(0, 0, 0)
 green=(0, 255, 0)
 red=(255, 0, 0)
 
+# Zobrazení textu GAME OVER
+
+
 pygame.init()  #Inicializace modulů pygame
 
 # Nastavení okna:
@@ -67,7 +70,7 @@ class snake_body:
             for i in range(len(self.segments) - 1, 0, -1):     # Postupné procházení seznamu pozpátku
                 if i > 0:                                     
                     self.segments[i] = self.segments[i - 1]   # Nastavení segmentu na pozici předešlého segmentu
-            print(self.segments)
+            #print(self.segments)                             # Pro testování 
             self.segments[0] = (head_x, head_y)               # Posun 1. segmentu na pozici, kde byla dříve hlava
 
 
@@ -84,49 +87,71 @@ fruit = snake_fruit()          # Volání třídy snake_fruit
 
 clock = pygame.time.Clock()    # Hodiny
 
+paused = False                 # Definice proměnné paused
 
-# Cyklus pro zobrazování okna:
-running=True    
-while running:
-    for event in pygame.event.get():            # Pro každý zjištěný event
-        if event.type == pygame.QUIT:           # Jestliže uživatel klikl na křížek
-            running = False                     # Ukončení cyklu
+# Hlavní herní cyklus:  
+while True:
+    body.segments = []         # Nastavení na 0 segmentů 
+    head.segment = (400, 400)  # Nastavení hlavy na počáteční pozici 
+    fruit = snake_fruit()      # Změnění pozice ovoce
     
-    #Pohyb hada:
-    keys = pygame.key.get_pressed()             # Vrátí seznam se všemi stisknutými klávesy
-    
-    head.change_direction(keys)                 # Volání funkce pro změnu směru
-    head.move()                                 # Volání funkce pro pohyb hlavy hada
-    old_head_x, old_head_y = head.old_segment   # Nastavení předešlých souřadnic hlavy
-    body.move(old_head_x, old_head_y)           # Volání funkce pro pohyb těla hada
+    running=True               # Nastavení running na True - Obnovení cyklu
+    while running:
+        for event in pygame.event.get():            # Pro každý zjištěný event
+            if event.type == pygame.QUIT:           # Jestliže uživatel klikl na křížek
+                quit()                              # Ukončení programu   # Funkce pro pozastavení hry
+            elif event.type == pygame.KEYDOWN:      # Jestliže je stisknutá klávesa
+                keys = pygame.key.get_pressed()     # Vrátí seznam se všemi stisknutými klávesy
+                if keys[pygame.K_p]:                # Jestliže je stisklé p
+                    paused = not paused             # Obrátí hodnotu proměnné paused              
+                    
+        if  paused == False:
+                                
+            #Pohyb hada:  
+            keys = pygame.key.get_pressed()             # Vrátí seznam se všemi stisknutými klávesy      
+            head.change_direction(keys)                 # Volání funkce pro změnu směru
+            head.move()                                 # Volání funkce pro pohyb hlavy hada
+            old_head_x, old_head_y = head.old_segment   # Nastavení předešlých souřadnic hlavy
+            body.move(old_head_x, old_head_y)           # Volání funkce pro pohyb těla hada
 
-    screen.fill(black)                 # Smazání starých pozic segmentů
-    
-# Přidávání nových segment:    
-    if head.segment == fruit.segment:
-        if head.direction == "RIGHT":                                               # Jestliže směr hlavy je do prava
-            body.add_segment(head.segment[0] - body.segment_size, head.segment[1])  # Přidá se segment na souřadnice vlevo od hlavy
-        elif head.direction == "LEFT":
-            body.add_segment(head.segment[0] + body.segment_size, head.segment[1])
-        elif head.direction == "UP":
-            body.add_segment(head.segment[0], head.segment[1] - body.segment_size)
-        elif head.direction == "DOWN":
-            body.add_segment(head.segment[0], head.segment[1] + body.segment_size)
+            screen.fill(black)                          # Smazání starých pozic segmentů
+                
+            # Přidávání nových segment:    
+            if head.segment == fruit.segment:
+                if head.direction == "RIGHT":                                               # Jestliže směr hlavy je do prava
+                    body.add_segment(head.segment[0] - body.segment_size, head.segment[1])  # Přidá se segment na souřadnice vlevo od hlavy
+                elif head.direction == "LEFT":
+                    body.add_segment(head.segment[0] + body.segment_size, head.segment[1])
+                elif head.direction == "UP":
+                    body.add_segment(head.segment[0], head.segment[1] - body.segment_size)
+                elif head.direction == "DOWN":
+                    body.add_segment(head.segment[0], head.segment[1] + body.segment_size)
+                    
+                screen.fill(black)
+                fruit = snake_fruit()           # Vytvoří novou pozici pro ovoce
+            
+            pygame.draw.rect(screen, (green), (head.segment[0], head.segment[1], head.segment_size, head.segment_size))   # Vykreslení hlavy hada
+            pygame.draw.rect(screen, (red), (fruit.segment[0], fruit.segment[1], fruit.segment_size, fruit.segment_size)) # Vykreslení ovoce
+                    
+            # Zobrazení segmentů těla:  
+            for segment in body.segments:          
+                pygame.draw.rect(screen, (green), (segment[0], segment[1], body.segment_size, body.segment_size))
+                
+                
+            pygame.display.update()   # Obnova okna
+
+            # Detekce kolize se stěnami:
+            if head.segment[0] > 780 or head.segment[1] > 780 or head.segment[0] < 20 or head.segment[1] < 20: # Jestliže se hlava dotkne stěny
+                #print("kolize_stena")              # Pro testování
+                running = False                     # Vypnutí cyklu
+                    
+            # Detekce kolize s tělem hadappp
+            for segment in body.segments:           # Pro každdý segment těla
+                if head.segment == segment:         # Jestliže se hlava dotkne segmentu těla
+                    #print("kolize_telo")           # Pro testování
+                    running = False                 # Vypnutí cyklu
+                    
+            clock.tick(7.5)           # Omezení na 7.5 snímku za sekundu
         
-        screen.fill(black)
-        fruit = snake_fruit()           # Vytvoří novou pozici pro ovoce
- 
-    pygame.draw.rect(screen, (green), (head.segment[0], head.segment[1], head.segment_size, head.segment_size))   # Vykreslení hlavy hada
-    pygame.draw.rect(screen, (red), (fruit.segment[0], fruit.segment[1], fruit.segment_size, fruit.segment_size)) # Vykreslení ovoce
-         
-# Zobrazení segmentů:  
-    for segment in body.segments:          
-        pygame.draw.rect(screen, (green), (segment[0], segment[1], body.segment_size, body.segment_size))
-    
-    
-    pygame.display.update()   # Obnova okna
-    
-    clock.tick(7.5)           # Omezení na 7.5 snímku za sekundu
-    
-pygame.quit()                 # Konec knihovny pygame
+pygame.quit()                     # Konec knihovny pygame
           
