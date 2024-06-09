@@ -9,11 +9,15 @@ green=(0, 255, 0)
 red=(255, 0, 0)
 
 # Zobrazení textu GAME OVER
-font_big = pygame.font.SysFont(None, 100, bold=True, italic=False)  # Nastavení fontu pro velké nápisy
-game_over = font_big.render("GAME OVER!", False, red)               # Nastavení textu GAME OVER!
-paused_text = font_big.render("PAUSED", False, green)                    # Nastavení textu PAUSED
-game_over_rect = game_over.get_rect(center=(400, 400))              # Nastavení umístění textu GAME OVER!
-paused_text_rect = paused_text.get_rect(center=(400, 400))                    # Nastavení umístění textu PAUSED
+font_big = pygame.font.SysFont(None, 100, bold=True, italic=False)          # Nastavení fontu pro velké nápisy
+font_small = pygame.font.SysFont(None, 25, bold=False, italic=False)        # Nastavení fontu pro malé nápisy
+space_text = font_small.render("Press SPACE to continue...", False, green)  # Nastavení textu SPACE
+game_over = font_big.render("GAME OVER!", True, red)                       # Nastavení textu GAME OVER!
+paused_text = font_big.render("PAUSED", True, green)                       # Nastavení textu PAUSED
+space_text_rect = space_text.get_rect(center=(400, 500))                    # Nastavení umístění textu SPACE
+game_over_rect = game_over.get_rect(center=(400, 400))                      # Nastavení umístění textu GAME OVER!
+paused_text_rect = paused_text.get_rect(center=(400, 400))                  # Nastavení umístění textu PAUSED
+
 
 # Nastavení okna:
 screen = pygame.display.set_mode((800, 800))      #Vytvoření herního okna
@@ -92,6 +96,8 @@ fruit = snake_fruit()          # Volání třídy snake_fruit
 clock = pygame.time.Clock()    # Hodiny
 
 paused = False                 # Definice proměnné paused
+running = True
+off = True 
 
 # Hlavní herní cyklus:  
 while True:
@@ -99,19 +105,37 @@ while True:
     head.segment = (400, 400)  # Nastavení hlavy na počáteční pozici 
     fruit = snake_fruit()      # Změnění pozice ovoce
     
+    # Okno GAME OVER!: 
+    if running == False:       # Pokud byl cyklus vypnut
+        off = True             
+        while off:
+            for event in pygame.event.get():            # Pro každý zjištěný event
+                if event.type == pygame.QUIT:           # Jestliže uživatel klikl na křížek
+                    pygame.quit()                       # Ukončení programu
+                elif event.type == pygame.KEYDOWN:      # Jestliže je stisknutá klávesa
+                    if event.key == pygame.K_SPACE:     # Jestliže je stisknutá klávesa SPACE
+                        off = False                     
+            screen.fill(black)                          # Vyčištění okna
+            screen.blit(game_over, game_over_rect)      # Zobrazení textu GAME OVER!
+            screen.blit(space_text, space_text_rect)    # Zobrazení textu SPACE
+            pygame.display.update()                     # Obnova okna
+            
+
+    
     running=True               # Nastavení running na True - Obnovení cyklu
     while running:
-        for event in pygame.event.get():            # Pro každý zjištěný event
-            if event.type == pygame.QUIT:           # Jestliže uživatel klikl na křížek
-                quit()                              # Ukončení programu   # Funkce pro pozastavení hry
-            elif event.type == pygame.KEYDOWN:      # Jestliže je stisknutá klávesa
-                keys = pygame.key.get_pressed()     # Vrátí seznam se všemi stisknutými klávesy
-                if keys[pygame.K_p]:                # Jestliže je stisklé p
-                    paused = not paused             # Obrátí hodnotu proměnné paused 
-                                 
+        for event in pygame.event.get():                # Pro každý zjištěný event
+            if event.type == pygame.QUIT:               # Jestliže uživatel klikl na křížek
+                pygame.quit()                           # Ukončení programu   
+            elif event.type == pygame.KEYDOWN:          # Jestliže je stisknutá klávesa
+                keys = pygame.key.get_pressed()         # Vrátí seznam se všemi stisknutými klávesy
+                if keys[pygame.K_p]:                    # Jestliže je stisklé p
+                    paused = not paused                 # Obrátí hodnotu proměnné paused 
+         
+                                
         if paused == True:
-            screen.fill(black)
-            screen.blit(paused_text, paused_text_rect)        
+            screen.fill(black)                          # Vyčištění okna
+            screen.blit(paused_text, paused_text_rect)  # Zobrazení textu PAUSED      
                 
         if  paused == False:
                                 
