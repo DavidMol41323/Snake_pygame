@@ -1,0 +1,61 @@
+Inicializace a základní nastavení:
+-----------------------------------
+pygame.init()
+    Inicializuje všechny moduly Pygame. Toto musíte zavolat před použitím jakékoli jiné funkce Pygame.
+pygame.display.set_mode(size)
+    Vytvoří hlavní okno hry s danými rozměry size (např. (800, 600)).
+pygame.display.set_caption(title)
+    Nastaví titulek okna na title.
+
+Správa času:
+------------
+pygame.time.Clock()
+    Vytváří Clock objekt pro řízení času a nastavování FPS (frames per second).
+clock.tick(fps)
+    Řídí rychlost hlavní smyčky hry tak, aby nepřekročila daný počet snímků za sekundu (FPS).
+
+Zpracování událostí:
+--------------------
+pygame.event.get()
+    Získává seznam všech událostí, které nastaly od posledního volání této funkce (např. stisk klávesy, pohyb myši).
+
+Práce s povrchy a vykreslování:
+-------------------------------
+pygame.Surface
+    Představuje obrázek nebo jiný objekt, který může být vykreslen na obrazovku.
+screen.fill(color)
+    Vyplní celý povrch okna barvou color.
+pygame.draw.rect(surface, color, rect)
+    Vykreslí obdélník dané barvy na daný povrch. rect může být tuple nebo pygame.Rect.
+pygame.display.flip()
+    Aktualizuje celý obsah okna. Používá se na konci hlavní smyčky k zobrazení všech změn.
+
+Správa vstupu:
+--------------
+pygame.key.get_pressed()
+    Získává stav všech kláves. Vrací pole, kde každá položka reprezentuje stav jedné klávesy (stisknuto/není stisknuto).
+
+Ukončení Pygame:
+----------------
+pygame.quit()
+    Ukončí všechny moduly Pygame. Měli byste volat tuto funkci před ukončením programu.
+
+Další užitečné funkce:
+-----------------------
+pygame.Rect(left, top, width, height)
+    Představuje obdélníkovou oblast. Používá se pro kolize a umisťování objektů.
+
+pygame.font.Font a pygame.font.SysFont(font_name, size, bold=False, italic=False)
+        font_name: Řetězec určující název systémového písma nebo None.
+        size: Velikost písma (v pixelech).
+        bold=False: Bool hodnota indikující, zda má být text tučný.
+        italic=False: Bool hodnota indikující, zda má být text kurzíva.
+    Vytváří objekty písma pro vykreslování textu. SysFont používá systémová písma.
+
+font.render(text, antialias, color)
+        text: Řetězec obsahující text, který má být vykreslen.
+    antialias: Bool hodnota, která určuje, zda má být použito antialiasing (hladké vykreslování) textu. Pokud je nastaveno na True,
+     text bude vykreslen s antialiasingem, což znamená, že bude působit hladší dojem. Pokud je nastaveno na False, antialiasing nebude použit.
+    color: Barva textu ve formátu (R, G, B) nebo (R, G, B, A), kde R, G, B a A jsou hodnoty červené, zelené, modré a alfa kanálu (průhlednost)
+     v rozmezí 0 až 255.    
+    Vykresluje text na povrch. antialias určuje, zda se má použít vyhlazování.

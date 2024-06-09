@@ -1,21 +1,39 @@
 import pygame
 import random
 
-pygame.init()  #Inicializace modulů pygame
+pygame.init()  # Inicializace modulů pygame
 
 # Definování barev:
 black=(0, 0, 0)
 green=(0, 255, 0)
 red=(255, 0, 0)
 
+# Funkce pro vytváření umístění a text pro skóre:
+def text_create_score(score):
+    font_score = pygame.font.SysFont(None, 50, bold=True, italic=False)         # Nastavení fontu pro text SCORE
+    score_text = font_score.render(f"Score: {score}" , True, green)             # Nastavení textu SCORE
+    score_text_rect = score_text.get_rect(center=(400, 400))                    # Nastavení umístění textu SCORE
+    return score_text, score_text_rect                                          # Vrací umístění a text
+
+score = 0      # Nastavení Skóre
+# Funkce pro obnovu skóre:
+def update_score(function):
+    global score
+    if function == "plus_score":        # Funkce přičtě 1 ke skóre
+        score += 1                      
+    elif function == "show_score":      # Funkce zobrazí skóre
+        return score
+    elif function == "zero_score":      # Funkce vrátí skóre na 0
+        score -= score
+        
 # Zobrazení textu GAME OVER
 font_big = pygame.font.SysFont(None, 100, bold=True, italic=False)          # Nastavení fontu pro velké nápisy
 font_small = pygame.font.SysFont(None, 25, bold=False, italic=False)        # Nastavení fontu pro malé nápisy
-space_text = font_small.render("Press SPACE to continue...", False, green)  # Nastavení textu SPACE
-game_over = font_big.render("GAME OVER!", True, red)                       # Nastavení textu GAME OVER!
-paused_text = font_big.render("PAUSED", True, green)                       # Nastavení textu PAUSED
-space_text_rect = space_text.get_rect(center=(400, 500))                    # Nastavení umístění textu SPACE
-game_over_rect = game_over.get_rect(center=(400, 400))                      # Nastavení umístění textu GAME OVER!
+space_text = font_small.render("Press SPACE to continue...", True, green)   # Nastavení textu SPACE
+game_over = font_big.render("GAME OVER!", True, red)                        # Nastavení textu GAME OVER!
+paused_text = font_big.render("PAUSED", True, green)                        # Nastavení textu PAUSED
+space_text_rect = space_text.get_rect(center=(400, 450))                    # Nastavení umístění textu SPACE
+game_over_rect = game_over.get_rect(center=(400, 350))                      # Nastavení umístění textu GAME OVER!
 paused_text_rect = paused_text.get_rect(center=(400, 400))                  # Nastavení umístění textu PAUSED
 
 
@@ -105,48 +123,54 @@ while True:
     head.segment = (400, 400)  # Nastavení hlavy na počáteční pozici 
     fruit = snake_fruit()      # Změnění pozice ovoce
     
+        
     # Okno GAME OVER!: 
     if running == False:       # Pokud byl cyklus vypnut
-        off = True             
+        off = True          
+        
+        score = update_score("show_score")
+        score_text, score_text_rect = text_create_score(score)     # Volání funkce pro skóre
+        
         while off:
-            for event in pygame.event.get():            # Pro každý zjištěný event
-                if event.type == pygame.QUIT:           # Jestliže uživatel klikl na křížek
-                    pygame.quit()                       # Ukončení programu
-                elif event.type == pygame.KEYDOWN:      # Jestliže je stisknutá klávesa
-                    if event.key == pygame.K_SPACE:     # Jestliže je stisknutá klávesa SPACE
+            for event in pygame.event.get():              # Pro každý zjištěný event
+                if event.type == pygame.QUIT:             # Jestliže uživatel klikl na křížek
+                    pygame.quit()                         # Ukončení programu
+                elif event.type == pygame.KEYDOWN:        # Jestliže je stisknutá klávesa
+                    if event.key == pygame.K_SPACE:       # Jestliže je stisknutá klávesa SPACE
                         off = False                     
-            screen.fill(black)                          # Vyčištění okna
-            screen.blit(game_over, game_over_rect)      # Zobrazení textu GAME OVER!
-            screen.blit(space_text, space_text_rect)    # Zobrazení textu SPACE
-            pygame.display.update()                     # Obnova okna
+            screen.fill(black)                            # Vyčištění okna
+            screen.blit(game_over, game_over_rect)        # Zobrazení textu GAME OVER!
+            screen.blit(space_text, space_text_rect)      # Zobrazení textu SPACE
+            screen.blit(score_text, score_text_rect)      # Zobrazení textu SCORE
+            pygame.display.update()                       # Obnova okna
             
-
+        update_score("zero_score")                        # Nastavení skóre na nulu
     
     running=True               # Nastavení running na True - Obnovení cyklu
     while running:
-        for event in pygame.event.get():                # Pro každý zjištěný event
-            if event.type == pygame.QUIT:               # Jestliže uživatel klikl na křížek
-                pygame.quit()                           # Ukončení programu   
-            elif event.type == pygame.KEYDOWN:          # Jestliže je stisknutá klávesa
-                keys = pygame.key.get_pressed()         # Vrátí seznam se všemi stisknutými klávesy
-                if keys[pygame.K_p]:                    # Jestliže je stisklé p
-                    paused = not paused                 # Obrátí hodnotu proměnné paused 
+        for event in pygame.event.get():                  # Pro každý zjištěný event
+            if event.type == pygame.QUIT:                 # Jestliže uživatel klikl na křížek
+                pygame.quit()                             # Ukončení programu   
+            elif event.type == pygame.KEYDOWN:            # Jestliže je stisknutá klávesa
+                keys = pygame.key.get_pressed()           # Vrátí seznam se všemi stisknutými klávesy
+                if keys[pygame.K_p]:                      # Jestliže je stisklé p
+                    paused = not paused                   # Obrátí hodnotu proměnné paused 
          
                                 
         if paused == True:
-            screen.fill(black)                          # Vyčištění okna
-            screen.blit(paused_text, paused_text_rect)  # Zobrazení textu PAUSED      
+            screen.fill(black)                            # Vyčištění okna
+            screen.blit(paused_text, paused_text_rect)    # Zobrazení textu PAUSED      
                 
         if  paused == False:
                                 
             #Pohyb hada:  
-            keys = pygame.key.get_pressed()             # Vrátí seznam se všemi stisknutými klávesy      
-            head.change_direction(keys)                 # Volání funkce pro změnu směru
-            head.move()                                 # Volání funkce pro pohyb hlavy hada
-            old_head_x, old_head_y = head.old_segment   # Nastavení předešlých souřadnic hlavy
-            body.move(old_head_x, old_head_y)           # Volání funkce pro pohyb těla hada
+            keys = pygame.key.get_pressed()               # Vrátí seznam se všemi stisknutými klávesy      
+            head.change_direction(keys)                   # Volání funkce pro změnu směru
+            head.move()                                   # Volání funkce pro pohyb hlavy hada
+            old_head_x, old_head_y = head.old_segment     # Nastavení předešlých souřadnic hlavy
+            body.move(old_head_x, old_head_y)             # Volání funkce pro pohyb těla hada
 
-            screen.fill(black)                          # Smazání starých pozic segmentů
+            screen.fill(black)                            # Smazání starých pozic segmentů
                 
             # Přidávání nových segment:    
             if head.segment == fruit.segment:
@@ -160,6 +184,8 @@ while True:
                     body.add_segment(head.segment[0], head.segment[1] + body.segment_size)
                     
                 screen.fill(black)
+                update_score("plus_score")
+                print(update_score("show_score"))                    # Testování
                 fruit = snake_fruit()           # Vytvoří novou pozici pro ovoce
             
             pygame.draw.rect(screen, (green), (head.segment[0], head.segment[1], head.segment_size, head.segment_size))   # Vykreslení hlavy hada
@@ -174,7 +200,7 @@ while True:
                 #print("kolize_stena")              # Pro testování
                 running = False                     # Vypnutí cyklu
                     
-            # Detekce kolize s tělem hadappp
+            # Detekce kolize s tělem hada
             for segment in body.segments:           # Pro každdý segment těla
                 if head.segment == segment:         # Jestliže se hlava dotkne segmentu těla
                     #print("kolize_telo")           # Pro testování
