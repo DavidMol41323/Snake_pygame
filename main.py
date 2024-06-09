@@ -1,15 +1,19 @@
 import pygame
 import random
 
+pygame.init()  #Inicializace modulů pygame
+
 # Definování barev:
 black=(0, 0, 0)
 green=(0, 255, 0)
 red=(255, 0, 0)
 
 # Zobrazení textu GAME OVER
-
-
-pygame.init()  #Inicializace modulů pygame
+font_big = pygame.font.SysFont(None, 100, bold=True, italic=False)  # Nastavení fontu pro velké nápisy
+game_over = font_big.render("GAME OVER!", False, red)               # Nastavení textu GAME OVER!
+paused_text = font_big.render("PAUSED", False, green)                    # Nastavení textu PAUSED
+game_over_rect = game_over.get_rect(center=(400, 400))              # Nastavení umístění textu GAME OVER!
+paused_text_rect = paused_text.get_rect(center=(400, 400))                    # Nastavení umístění textu PAUSED
 
 # Nastavení okna:
 screen = pygame.display.set_mode((800, 800))      #Vytvoření herního okna
@@ -103,8 +107,12 @@ while True:
             elif event.type == pygame.KEYDOWN:      # Jestliže je stisknutá klávesa
                 keys = pygame.key.get_pressed()     # Vrátí seznam se všemi stisknutými klávesy
                 if keys[pygame.K_p]:                # Jestliže je stisklé p
-                    paused = not paused             # Obrátí hodnotu proměnné paused              
-                    
+                    paused = not paused             # Obrátí hodnotu proměnné paused 
+                                 
+        if paused == True:
+            screen.fill(black)
+            screen.blit(paused_text, paused_text_rect)        
+                
         if  paused == False:
                                 
             #Pohyb hada:  
@@ -136,9 +144,6 @@ while True:
             # Zobrazení segmentů těla:  
             for segment in body.segments:          
                 pygame.draw.rect(screen, (green), (segment[0], segment[1], body.segment_size, body.segment_size))
-                
-                
-            pygame.display.update()   # Obnova okna
 
             # Detekce kolize se stěnami:
             if head.segment[0] > 780 or head.segment[1] > 780 or head.segment[0] < 20 or head.segment[1] < 20: # Jestliže se hlava dotkne stěny
@@ -151,7 +156,8 @@ while True:
                     #print("kolize_telo")           # Pro testování
                     running = False                 # Vypnutí cyklu
                     
-            clock.tick(7.5)           # Omezení na 7.5 snímku za sekundu
+        clock.tick(7.5)           # Omezení na 7.5 snímku za sekundu
+        pygame.display.update()   # Obnova okna
         
 pygame.quit()                     # Konec knihovny pygame
           
