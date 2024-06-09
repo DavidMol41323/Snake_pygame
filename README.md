@@ -16,6 +16,7 @@ Na začátku projektu, při vytváření vykreslení hlavy hada, jsem nechal cha
 
 Jsem spokojený s výsledky tohohle projektu. Pochopil jsem vytváření základních her s využitím pygame, vytvořil funkční hru snake s "gameover" oknem, na konci jsem dokonce přidal počítání skóre. A myslím si, že jsem nyní schopen vytvářet jednoduché hry s pygame.
 
+Vytváření hry a zjišťování informací, zabralo zhruba 11 hodin
 ## Spuštění hry
 1. Nainstalujte VScode
 2. Stáhněte si rožšíření python ve VScode
