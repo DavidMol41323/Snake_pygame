@@ -185,9 +185,19 @@ while True:
                     
                 screen.fill(black)
                 update_score("plus_score")
-                print(update_score("show_score"))                    # Testování
-                fruit = snake_fruit()           # Vytvoří novou pozici pro ovoce
-            
+                #print(update_score("show_score"))                    # Testování
+                
+                # Spawn nového ovoce, tak aby se nespawnul na místě segmentech hada:
+                fruit_generation = True                 
+                while fruit_generation:
+                    new_fruit = snake_fruit()                                     # Vytvoří novou pozici pro ovoce
+                    if new_fruit != head.segment and new_fruit != body.segments:  # Jestliže vygenerované souřadnice pro ovoce nejsou na segmentech hada   
+                        fruit = new_fruit                                         # Vygenerované ovoce bude mít souřadnice new_fruit
+                        fruit_generation = False                                  # Přesrušení cyklu
+
+                    else:                                                         # Jinak cyklus pokračuje
+                        fruit_generation = True
+                
             pygame.draw.rect(screen, (green), (head.segment[0], head.segment[1], head.segment_size, head.segment_size))   # Vykreslení hlavy hada
             pygame.draw.rect(screen, (red), (fruit.segment[0], fruit.segment[1], fruit.segment_size, fruit.segment_size)) # Vykreslení ovoce
                     
